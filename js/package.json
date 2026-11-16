@@ -1,0 +1,82 @@
+{
+  "name": "tracegram",
+  "version": "0.1.0",
+  "description": "A grammar of agent processes, with declarative views compiled to Vega.",
+  "license": "MIT",
+  "author": "Sjoerd Vink",
+  "homepage": "https://sjoerdvink99.github.io/tracegram/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sjoerdvink99/tracegram.git",
+    "directory": "js"
+  },
+  "bugs": "https://github.com/sjoerdvink99/tracegram/issues",
+  "type": "module",
+  "keywords": [
+    "agents",
+    "llm",
+    "traces",
+    "opentelemetry",
+    "visualization",
+    "grammar",
+    "process-mining",
+    "vega"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/tracegram.min.js",
+  "jsdelivr": "./dist/tracegram.min.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tracegram.min.js": "./dist/tracegram.min.js",
+    "./view.schema.json": "./dist/view.schema.json"
+  },
+  "bin": {
+    "tracegram": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.mjs",
+    "schema": "node schema.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "prepack": "npm run build",
+    "lint": "eslint . && prettier --check src test docs eslint.config.ts ../examples/explorer/src ../examples/node/report.ts ../examples/benchmarks/scale.ts",
+    "format": "prettier --write src test docs eslint.config.ts ../examples/explorer/src ../examples/node/report.ts ../examples/benchmarks/scale.ts"
+  },
+  "dependencies": {
+    "vega": "^6.4.0"
+  },
+  "devDependencies": {
+    "@anywidget/types": "^0.2.0",
+    "@eslint/js": "^9.39.5",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^4.1.12",
+    "dts-bundle-generator": "^9.5.1",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.5",
+    "jiti": "^2.7.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.10.1",
+    "ts-json-schema-generator": "2.5.0",
+    "typescript": "^5.6.0",
+    "typescript-eslint": "^8.72.2",
+    "vitest": "^4.1.12"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.8"
+    }
+  }
+}

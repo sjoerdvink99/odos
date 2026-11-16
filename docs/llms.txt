@@ -1,0 +1,48 @@
+# tracegram
+
+> A grammar of agent processes, with declarative views compiled to Vega. A JSON view spec maps the records an agent logs to traces in a formal grammar of agent processes, and compiles one of thirteen views to Vega; every corpus view is a defined aggregation of those traces. Validate specs against https://cdn.jsdelivr.net/npm/tracegram/dist/view.schema.json; invalid specs raise SpecError with a path.
+
+## A view spec
+
+{ "mark": "variants", "level": "names",
+  "data": { "url": "events.jsonl" },
+  "trace": { "run": "session", "actor": "type", "name": "tool", "start": "start", "end": "end", "failed": "error", "group": "version" } }
+
+- data: { "values": [...] } or { "url": "file.jsonl" }, optional "format". Telemetry in a standard (otel, openai_agents, langsmith, langfuse, inspect, messages, codex, claude_code, atif, swe_agent, openhands) needs no "trace" mapping.
+- transform: [{ "filter": predicate }], predicates { field, equal | oneOf | range | valid } combined with and, or, not. Filters records before mapping.
+- trace: maps record fields to run, actor, name, step, parent, start, end, failed, group. actor and name take { "field", "map" }; failed takes { "field", "equal" }; start and end take { "field", "unit": "s" | "ms" | "us" | "ns" }; group takes { "field", "order" } and compares at most two groups.
+- Actors: model, tool, agent, human, code. A step is actor.name, e.g. tool.search.
+
+## Marks
+
+- One run: timeline (lanes: step | agent), handoffs. Both take filter: { "param": name } to draw the first selected run.
+- Many runs: icicle, variants, sankey, projection (read each run's path; take level and loops); transitions, graph (read pairs of steps; take level and count); activities, durations (read steps; take level); sequences, distribution (measure: steps | failures | duration).
+- A design: diagram with "process": an expression.
+- level: full | names | actors. loops: count | fold. count: steps | runs. limit: how many items to show; the rest become one remainder.
+- Composition: vconcat, hconcat with shared data, transform and trace; facet: { "field" } with "spec": a view, one panel per value.
+
+## Interaction
+
+- params: [{ "name": "picked", "select": "click" | "hover" }] selects runs (steps in timeline, handoffs and diagram).
+- highlight: { "param": name } or an expression query; filter: { "param": name } keeps the selected runs.
+- tooltip: true, false or a list of fields.
+
+## Grammar
+
+Sequence ->, parallel ||, choice |, repeat {m,n} and parallel copies [m,n], shorthands * + ? [], nested context agent.worker{ ... }, failure !, signature tool.search(query:text => hit:doc[]). In queries, _ matches any step.
+Examples: (model -> tool[])* -> model; model.route -> (agent.billing | agent.tech); (model -> tool!){2,}
+
+## Commands
+
+- npx tracegram report <file-or-folder> [<other>] [--trace mapping.json] -o report.html: linked views of a corpus; a folder is one corpus, two sources are compared.
+- npx tracegram view.json -o figure.svg, or --vega for the compiled Vega spec. data.url is relative to the spec.
+- Python: tracegram.Chart(spec).save("figure.pdf") (.svg, .png, .pdf with pip install "tracegram[save]"); tracegram.Corpus(tracegram.read(path)).find(query), .conformance(design), .variants(level, loops); tracegram.Diff(a, b, labels=(...)).
+
+## Docs
+
+- https://sjoerdvink99.github.io/tracegram/playground/
+
+- https://sjoerdvink99.github.io/tracegram/views/
+- https://sjoerdvink99.github.io/tracegram/aggregation/
+- https://sjoerdvink99.github.io/tracegram/data/
+- https://sjoerdvink99.github.io/tracegram/grammar/

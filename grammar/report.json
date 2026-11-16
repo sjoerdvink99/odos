@@ -1,0 +1,9 @@
+{
+  "views": [
+    { "mark": "variants", "level": "names", "limit": 10, "title": "variants", "params": [{ "name": "picked", "select": "click" }], "highlight": { "param": "picked" } },
+    { "mark": "activities", "title": "activities", "filter": { "param": "picked" } },
+    { "mark": "transitions", "title": "transitions", "filter": { "param": "picked" } },
+    { "mark": "distribution", "title": "steps per run", "filter": { "param": "picked" } }
+  ],
+  "timed": { "mark": "timeline", "title": "one run of the selection", "filter": { "param": "picked" } }
+}

@@ -1,0 +1,49 @@
+# Changelog
+
+## Unreleased
+
+- **Figures from Python, without Node.** `chart.save` writes `.svg`, `.png` and `.pdf`, and `to_png(scale)` and `to_pdf()` return them, with `pip install "tracegram[save]"`: the same compiler runs in an embedded JavaScript engine and vl-convert renders its Vega. The wheel no longer ships the Node CLI.
+- **Specs as they are, in Python.** A `data.url` naming a local file is read in Python, so every spec in the docs works in `tracegram.Chart(spec)`, the widget, saved pages and figures.
+- **Comparison in one command.** `tracegram report before.jsonl after.jsonl` compares two sources, one group each, named after the file. A folder is one corpus, and the CLI reads Inspect AI `.eval` archives and Claude Code sub-agent sessions, as Python does. `tracegram.report` takes a `Corpus`, a `Diff` or a folder.
+- **Playground.** A docs page renders any spec as you edit it, over the examples or a file you drop, which never leaves the browser; it downloads SVG, PNG and Vega, and copies a link that restores the spec.
+- **An Agent Skill.** `skills/tracegram` teaches Claude Code and other agents to report on, compare and draw runs, and its specs are tested.
+- **Cite.** The README and docs give a BibTeX entry, and report pages link to it.
+- **Fixes.** The docs' figure and spec styles apply again after the rename.
+- **Aggregation, defined.** A new Aggregation page defines every corpus view as abstract, read, count, rank and fold, with stated units, and both test suites check its guarantees: counts roll up across levels, every run conforms to its own abstraction, prefixes split their runs exactly, remainders keep their runs.
+- **Levels and loops.** `level` is `full`, `names` or `actors`, and a separate `loops`, `count` or `fold`, on `icicle`, `variants`, `sankey` and `projection`, says whether a loop keeps how often it ran, at any level. `level: "loops"` becomes `level: "actors", loops: "fold"`. A folded loop is failed only when every pass failed, so a run always conforms to its own abstraction. Views show a switch for each.
+- **Pairs that happened.** A new `pairs` table holds the steps that directly follow each other in a run's order. `transitions` and `graph` count these, so parallel branches no longer form a pair, and a step's body follows the step. `count: "runs"` shows the share of runs with each pair instead of how often it occurs per run. Graph nodes count steps, not incoming pairs.
+- **Shared variants.** A variant is a distinct path, shared by every abstraction that produces it: `variants` drops its `level` column, and `runs` has one column per abstraction, `full` to `actors_loops`. Compiled specs ship each path once.
+- **Renaming steps.** `trace.name` takes `{ "field", "map" }` to rename steps, for instance tools into categories, before any view counts them.
+- **Reports.** `tracegram report traces.jsonl` writes one page of linked views of a corpus; `report(data, trace)` in TypeScript and `tracegram.report(data, trace)` in Python return the same spec, defined once in `grammar/report.json`.
+- **Inspect AI events.** A new `inspect` reader reads each sample's timed model, tool and agent events, with failures and sub-agents.
+- **Benchmarks.** `examples/benchmarks` measures compile time, spec size and interaction as a corpus grows, and checks variants and directly-follows counts against pm4py.
+- **Data in the spec.** `data` holds records, as in Vega-Lite: `{ "values": [...] }` inline or `{ "url": "spans.jsonl" }`, with an optional `format`. A view reads any standard, runs written as expressions, or records of your own shape. `load(spec)` fetches urls; `embed`, `render` and the CLI do so themselves.
+- **Mapping to the grammar.** `trace` maps fields of the records to a trace: `run`, `actor`, `name`, `step`, `parent`, `start`, `end`, `failed` and `group`. Actor values follow the vocabulary of every standard in `conventions.json`, or a `map` of your own. `read(source, mapping)` does the same outside a view, in TypeScript and Python, held to `grammar/mappings.json`.
+- **Groups from a field.** Two groups to compare come from the `group` channel instead of nested `{ name, runs }` lists, ordered by first appearance or by `{ "field", "order" }`.
+- **Filters.** `transform: [{ "filter": predicate }]` keeps the records that matter before they are mapped, with Vega-Lite's `equal`, `oneOf`, `range` and `valid` predicates combined by `and`, `or` and `not`. Filters travel with the data a view inherits.
+- **Facets.** `{ "facet": { "field", "columns" }, "spec": view }` draws one panel per value of a field, for any number of groups. Panels share their legend, level switch, selections and group colours. Python charts of more than two corpora become facets.
+- **Shared data.** `data` and `trace` on a `vconcat` or `hconcat` hold for every view in it.
+- **One run of many.** `timeline` and `handoffs` take `filter`, a selection of runs, and draw the first selected run; rows, lanes, height and time axis follow the selection in the Vega dataflow.
+- **Real runs.** The gallery shows 400 SWE-agent trajectories on real GitHub issues, extracted by `examples/data/swe_agent.py`.
+- **One repeat.** The grammar has six forms: a step, `->`, `||`, `|`, and a repeat of each composition, `{m,n}` in sequence and `[m,n]` in parallel. Parallel copies take bounds, as in `tool[1,]`; `* + ?`, `{n}`, `[]` and `[n]` are shorthands. `repeat(node, lo, hi, parallel)` builds one in TypeScript.
+- **Exact parallel matching.** `conforms` and `find` match parallel branches by a bounded assignment, so `model[0] || tool` accepts `tool`, `(tool.a || tool.b)[2]` accepts its own trace, and `_[] || model[1]` accepts `model || tool`.
+- **Tables.** A corpus has one relational form: `runs`, `variants`, `tokens`, `steps` and `times`, built by `tables(runs)` in TypeScript and `tracegram.tables(runs)` in Python and held to `grammar/tables.json`. Every view is a Vega dataflow over them, the compiled spec ships each table once per data source, and Python's `Corpus` analyses them (`corpus.tables`).
+- **Scale.** Each distinct trace ships once, plus a short row per run. At 10,000 runs the icicle compiles to 4 MB instead of 101 MB and `durations` to 13 MB instead of 205 MB.
+- **Steps by position.** Steps carry no ids: a step is its position in the trace, a step before its body. `find` returns positions, a run's times follow the same order, and Python's `Trace` has a `time` field. Readers build each trace and its times together.
+- **Fixes.** Variant labels no longer wrap every step after the fifth in parentheses, and read as the grammar names the variant, `abstract(trace, level)`; `loops` no longer breaks on equal-shaped bodies with and without a loop, which also made Python fold them wrongly; `durations` counts runs, not steps, in its tooltip and highlight; `tracegram --help` exits with 0.
+- **Compiling to Vega.** A new page shows what tracegram computes, what Vega computes, and the tables in between.
+- **Breaking.** `Many` is gone from both packages: parallel copies are a `Repeat` with `parallel` set. `Step` has no `ids`, and Python's `Trace` keeps times in `time` instead of `meta["time"]`. `data` is no longer a list of runs or groups, and `timeline` and `handoffs` draw a run of their `data` instead of taking `process` and `time`.
+
+## 0.1.0
+
+The first release, as `tracegram` on npm and PyPI.
+
+- **Grammar.** Five actors, sequence, parallel, choice, repetition, parallel copies, nested contexts, signatures and failure. Parsing, printing, conformance, queries, abstraction, folding and sampling, in TypeScript and Python, held to one shared set of cases.
+- **Views.** The marks `diagram`, `timeline` (per step or in agent swimlanes), `handoffs`, `icicle`, `variants`, `transitions`, `graph`, `sankey`, `activities`, `sequences`, `distribution`, `durations` and `projection`, composed with `vconcat` and `hconcat`, covering the views of the agent and event-sequence visualization literature. Two groups of runs show their difference. A JSON Schema for every spec.
+- **Built on Vega.** `compile` turns a view into a self-contained Vega spec, as Vega-Lite does: aggregation, ranking, layout, scales, guides, tooltips and selections are Vega dataflow and signals. `render` and `embed` run it with Vega; the CLI's `--vega` and Python's `Chart.to_vega()` export it.
+- **Aggregation.** Corpus views scale to thousands of runs: they abstract each run to a `level`, group runs into items, and draw the largest while folding the rest into a remainder that still counts and selects its runs. Beyond `limit` runs, `sequences` becomes a relative frequency sequence plot.
+- **Tooltips.** Every item carries a structured tooltip of named fields, one value per group when two are compared; `tooltip` chooses and renames the fields.
+- **Interaction.** Selections in the spec, after Vega-Lite's `params`: a view selects runs or steps on `click` or `hover`, and views `highlight` or `filter` by them, re-aggregating in the dataflow. `embed` adds zoom, a level switch and a `select` event, and every interactive state is a spec.
+- **Reading.** One `read(source, format?)` replaces the per-format readers and detects OTel/OTLP, Jaeger, Tempo, MLflow, Langfuse, LangSmith, OpenAI Agents, chat transcripts (OpenAI, Anthropic, Gemini, Bedrock, LangChain, Pydantic AI, Inspect AI, ShareGPT, ADK), Codex CLI, Claude Code, ATIF, SWE-agent and OpenHands.
+- **Standards.** Readers for OpenTelemetry GenAI and MCP, OpenInference, OpenLLMetry, Langfuse, the Vercel AI SDK, provider transcripts, the OpenAI Agents SDK, LangSmith and ATIF. Exports to OTLP/JSON, XES, OCEL 2.0, BPMN 2.0 and pm4py process trees.
+- **Bounded.** Expressions nest at most 64 levels, traces have at most 100,000 steps, and sizes are at most 1,000,000. Invalid input raises `ParseError`, `TraceError`, `SpecError` or `TypeError` with a location; readers skip what they cannot read.

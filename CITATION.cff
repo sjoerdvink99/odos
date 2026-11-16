@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: If you use this software in your research, please cite it.
+type: software
+title: "tracegram: A Grammar of Agent Processes, with Declarative Views Compiled to Vega"
+abstract: A grammar of agent processes, with declarative views compiled to Vega. One syntax describes a run, a design and a query. A JSON view spec maps the records agents already log, in OpenTelemetry and other standards or in any shape, to traces in a formal grammar of agent processes covering tool calls, delegation, parallelism, loops and failures. Views abstract and aggregate corpora of runs with defined units and compile to Vega: diagrams, timelines, hand-offs, icicles, variants, process graphs, Sankeys, transition matrices, activity statistics, sequences, distributions, durations and projections.
+authors:
+  - family-names: Vink
+    given-names: Sjoerd
+version: 0.1.0
+license: MIT
+repository-code: https://github.com/sjoerdvink99/tracegram
+keywords:
+  - agents
+  - large language models
+  - visualization
+  - grammar
+  - process mining
+  - opentelemetry
